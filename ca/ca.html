@@ -1,0 +1,272 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My AI Chat</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background: #f7f3f8;
+            color: #292333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #eee5f0;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 25px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .new-chat {
+            width: 100%;
+            background: #ded0e5;
+            margin-bottom: 25px;
+        }
+
+        .history p {
+            padding: 10px 5px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .history p:hover {
+            background: #dfd1e7;
+        }
+
+        /* Main chat area */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 22px;
+            border-bottom: 1px solid #e8dfe9;
+            font-weight: bold;
+        }
+
+        .chat {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .welcome {
+            text-align: center;
+            margin: 70px 0 45px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 12px;
+        }
+
+        .message {
+            margin: 20px auto;
+            max-width: 650px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .message p {
+            white-space: pre-wrap;
+        }
+
+        /* Input area */
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 18px;
+            max-width: 750px;
+            width: 100%;
+            margin: auto;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid #d6c5dd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #9370aa;
+        }
+
+        .send {
+            background: #292333;
+            color: white;
+            font-size: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 0 10px 12px;
+            font-size: 12px;
+            color: #817787;
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 125px;
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .chat {
+                padding: 12px;
+            }
+
+            .welcome {
+                margin-top: 40px;
+            }
+
+            header {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <h2>✦ My AI</h2>
+
+        <button class="new-chat" onclick="newChat()">
+            + New Chat
+        </button>
+
+        <h4>Chat History</h4>
+        <div class="history" id="history"></div>
+    </aside>
+
+    <main class="main">
+        <header>My AI ✦</header>
+
+        <section class="chat" id="chat">
+            <div class="welcome" id="welcome">
+                <h1>✦</h1>
+                <h1>How can I help you?</h1>
+                <p>Ask me anything. Let's learn something new!</p>
+            </div>
+        </section>
+
+        <div class="input-area">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Message My AI..."
+                onkeydown="if(event.key === 'Enter') sendMessage()"
+            >
+            <button class="send" onclick="sendMessage()">↑</button>
+        </div>
+
+        <p class="footer">
+            My AI Demo · This is a beginner project
+        </p>
+    </main>
+
+    <script>
+        const chat = document.getElementById("chat");
+        const input = document.getElementById("userInput");
+        const history = document.getElementById("history");
+
+        function addMessage(sender, text) {
+            const welcome = document.getElementById("welcome");
+            if (welcome) welcome.remove();
+
+            const message = document.createElement("div");
+            message.className = "message";
+
+            const name = document.createElement("strong");
+            name.textContent = sender;
+
+            const content = document.createElement("p");
+            content.textContent = text;
+
+            message.append(name, content);
+            chat.appendChild(message);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = input.value.trim();
+
+            if (text === "") return;
+
+            addMessage("You", text);
+            input.value = "";
+
+            const item = document.createElement("p");
+            item.textContent = "💬 " + text;
+            item.onclick = function () {
+                input.value = text;
+                input.focus();
+            };
+            history.prepend(item);
+
+            // Simple demo replies (not a real AI)
+            setTimeout(function () {
+                let reply = "That's an interesting question! Keep exploring and learning.";
+
+                if (text.toLowerCase().includes("html")) {
+                    reply = "HTML creates the structure of a webpage using headings, paragraphs, images and links.";
+                } else if (text.toLowerCase().includes("css")) {
+                    reply = "CSS styles your webpage with colors, spacing, layouts and animations.";
+                } else if (text.toLowerCase().includes("javascript")) {
+                    reply = "JavaScript makes webpages interactive, for example with buttons and dynamic messages.";
+                } else if (text.toLowerCase().includes("hello")) {
+                    reply = "Hello! 👋 Welcome to My AI. What would you like to learn today?";
+                }
+
+                addMessage("My AI", reply);
+            }, 500);
+        }
+
+        function newChat() {
+            chat.innerHTML = `
+                <div class="welcome" id="welcome">
+                    <h1>✦</h1>
+                    <h1>How can I help you?</h1>
+                    <p>Ask me anything. Let's learn something new!</p>
+                </div>
+            `;
+
+            input.value = "";
+            input.focus();
+        }
+    </script>
+
+</body>
+</html>
+```
